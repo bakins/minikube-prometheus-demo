@@ -3,7 +3,7 @@
 This is a quick demo of using
 [minikube](https://github.com/kubernetes/minikube) to test
 [Prometheus](https://prometheus.io/).  This is meant to familiarize
-peopel with working with minikube, kubectl, prometheus, and grafana.
+people with working with minikube, kubectl, prometheus, and grafana.
 
 ## Prerequisites ##
 
@@ -27,7 +27,7 @@ and start a single node, local Kubernetes cluster by running:
 `minikube start --vm-driver=xhyve`.  If not using the xhyve driver,
 just run `minikube start`.
 
-You can chek that the node is up and running by running: `minikube
+You can check that the node is up and running by running: `minikube
 status`. You should see something like:
 ```
 minikubeVM: Running
@@ -57,7 +57,7 @@ minikube`
 We are going to install the monitoring components into a "monitoring"
 namespace.  While this is not necessary, it does show "best practices"
 in organizing applications by namespace rather than deploying
-eveything into the default namespace.
+everything into the default namespace.
 
 
 First, create the monitoring namespace: `kubectl create -f
@@ -85,13 +85,13 @@ included with Prometheus.
 ### Prometheus Configuration ###
 Prometheus will get its configuration from a
 [Kubernetes ConfigMap](http://kubernetes.io/docs/user-guide/configmap/).
-This allows us to update the configuration seperate from the image.
+This allows us to update the configuration separate from the image.
 Note: there is a large debate about whether this is a "good" approach
 or not, but for demo purposes this is fine.
 
 Look at [prometheus-config.yaml](./prometheus-config.yaml). The
 relevant part is in `data/prometheus.yml`.  This is just a [Prometheus
-configruation](https://prometheus.io/docs/operating/configuration/)
+configuration](https://prometheus.io/docs/operating/configuration/)
 inlined into the Kubernetes manifest. Note that we are using the
 in-cluster
 [Kubernetes service account](http://kubernetes.io/docs/user-guide/service-accounts/)
@@ -100,7 +100,7 @@ to access the Kubernetes API.
 To deploy this to the cluster run `kubectl create -f
 prometheus-config.yaml`.  You can view this by running `kubectl get
 configmap --namespace=monitoring prometheus-config -o yaml`. You can
-calso see this in the Kubernetes Dashboard.
+also see this in the Kubernetes Dashboard.
 
 
 ### Prometheus Pod ###
@@ -111,9 +111,9 @@ This is a [Kubernetes Deployment](http://kubernetes.io/docs/user-guide/deploymen
 the pod, resources, etc.  Note:
 
 * In the metadata section, we give the pod a label with a key of
-`name` and a value of `prometheus`. This will come in handly later.
+`name` and a value of `prometheus`. This will come in handy later.
 * In annotations, we set a couple of key/value pairs that will
-actually allow Prometheus to autodeiscover and scrape itself.
+actually allow Prometheus to autodiscover and scrape itself.
 * We are using an
   [emptyDir volume](http://kubernetes.io/docs/user-guide/volumes/#emptydir)
   for the Prometheus data.  This is basically a temporary directory
@@ -186,7 +186,7 @@ panel.  Under metrics, select "prometheus" as the datasource. For the
 query, use `sum(container_memory_usage_bytes) by (kubernetes_pod_name)`.  Click
 save. This graphs the memory used per pod.
 
-### Promethues Node Explorer ###
+### Prometheus Node Explorer ###
 
 We can also use Prometheus to collect metrics of the nodes
 themselves.  We use the
@@ -198,9 +198,9 @@ this.
 
 In [node-exporter-daemonset.yml](./node-exporter-daemonset.yml) you
 will see that it looks similar to the deployment we did earlier.
-Notice that we run this in priviledged mode (`privileged: true`) as it
+Notice that we run this in privileged mode (`privileged: true`) as it
 needs access to various information about the node to perform
-monitoring.  Also notice that we are monting in a few node directories
+monitoring.  Also notice that we are mounting in a few node directories
 to monitor various things.
 
 Run `kubectl create -f node-exporter-daemonset.yml` to create the
