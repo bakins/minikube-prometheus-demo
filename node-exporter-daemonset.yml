@@ -26,13 +26,13 @@ spec:
               cpu: 0.15
           securityContext:
             privileged: true
-          image: prom/node-exporter
+          image: prom/node-exporter:v0.15.2
           args:
-            - -collector.procfs
+            - --path.procfs
             - /host/proc
-            - -collector.sysfs
+            - --path.sysfs
             - /host/sys
-            - -collector.filesystem.ignored-mount-points
+            - --collector.filesystem.ignored-mount-points
             - '"^/(sys|proc|dev|host|etc)($|/)"'
           name: node-exporter
           volumeMounts:
