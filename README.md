@@ -24,14 +24,15 @@ Install the prerequisites.
 
 If using the xhyve driver for minikube, you should be able to create
 and start a single node, local Kubernetes cluster by running:
-`minikube start --vm-driver=xhyve`.  If not using the xhyve driver,
+`minikube start --vm-driver=hyperkit`.  If not using the hyperkit driver,
 just run `minikube start`.
 
 You can check that the node is up and running by running: `minikube
 status`. You should see something like:
 ```
-minikubeVM: Running
-localkube: Running
+minikube: Running
+cluster: Running
+kubectl: Correctly Configured: pointing to minikube-vm at 192.168.64.48
 ```
 
 If you want to stop the cluster, run `minikube stop`. To start it, run
@@ -60,8 +61,7 @@ in organizing applications by namespace rather than deploying
 everything into the default namespace.
 
 
-First, create the monitoring namespace: `kubectl create -f
-monitoring-namespace.yaml`.
+First, create the monitoring namespace: `kubectl apply -f monitoring-namespace.yaml`.
 
 You can now list the namespaces by running `kubectl get namespaces`
 and you should see something similar to:
@@ -97,7 +97,7 @@ in-cluster
 [Kubernetes service account](http://kubernetes.io/docs/user-guide/service-accounts/)
 to access the Kubernetes API.
 
-To deploy this to the cluster run `kubectl create -f
+To deploy this to the cluster run `kubectl apply -f
 prometheus-config.yaml`.  You can view this by running `kubectl get
 configmap --namespace=monitoring prometheus-config -o yaml`. You can
 also see this in the Kubernetes Dashboard.
@@ -121,7 +121,7 @@ actually allow Prometheus to autodiscover and scrape itself.
   this is fine, but we'd do something more persistent for other use
   cases.
 
-Deploy the deployment by running `kubectl create -f
+Deploy the deployment by running `kubectl apply -f
 prometheus-deployment.yaml`.  You can see this by running `kubectl get
 deployments --namespace=monitoring`.
 
@@ -141,7 +141,7 @@ few things to note:
 port on each node in our cluster. You can query the API to get this
 port.
 
-Create the service by running `kubectl create -f
+Create the service by running `kubectl apply -f
 prometheus-service.yaml`.  You can then view it by running `kubectl
 get services --namespace=monitoring prometheus -o yaml`.
 
@@ -160,8 +160,8 @@ Prometheus discovered itself under `kubernetes-pods`
 ### Deploying Grafana ###
 
 You can deploy [grafana](http://grafana.org/) by creating its deployment and service by
-running `kubectl create -f grafana-deployment.yaml` and `kubectl
-create -f grafana-service.yaml`. Feel free to explore via the kubectl
+running `kubectl apply -f grafana-deployment.yaml` and `kubectl
+apply -f grafana-service.yaml`. Feel free to explore via the kubectl
 command line and/or the Dashboard.
 
 Go to  grafana by running `minikube service --namespace=monitoring
@@ -183,7 +183,7 @@ source".
 Create a New dashboard by clicking on the upper-left icon and
 selecting Dashboard->New.  Click the green control and add a graph
 panel.  Under metrics, select "prometheus" as the datasource. For the
-query, use `sum(container_memory_usage_bytes) by (kubernetes_pod_name)`.  Click
+query, use `sum(container_memory_usage_bytes) by (pod_name)`.  Click
 save. This graphs the memory used per pod.
 
 ### Prometheus Node Explorer ###
@@ -203,7 +203,7 @@ needs access to various information about the node to perform
 monitoring.  Also notice that we are mounting in a few node directories
 to monitor various things.
 
-Run `kubectl create -f node-exporter-daemonset.yml` to create the
+Run `kubectl apply -f node-exporter-daemonset.yml` to create the
 daemon set.  This will run an instance of this on every node. In
 minikube, there is only one node, but this concept scales to thousands
 of nodes.
@@ -220,3 +220,4 @@ average of the nodes.
 Note: in a "real" implementation, we would label the pods in an easily
 queryable pattern.
 
+To cleanup, you can delete the entire monitoring namespace `kubectl delete namespace monitoring`

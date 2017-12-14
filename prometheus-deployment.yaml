@@ -1,3 +1,44 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: prometheus
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/proxy
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: default
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: monitoring
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -26,12 +67,12 @@ spec:
     spec:
       containers:
       - args:
-        - -config.file=/etc/prometheus/prometheus.yml
-        - -storage.local.path=/prometheus
-        - -storage.local.retention=24h
+        - --config.file=/etc/prometheus/prometheus.yml
+        - --storage.tsdb.path=/prometheus
+        - --storage.tsdb.retention=24h
         command:
         - /bin/prometheus
-        image: quay.io/prometheus/prometheus:v1.1.3
+        image: quay.io/prometheus/prometheus:v2.0.0
         imagePullPolicy: IfNotPresent
         name: prometheus
         ports:
