@@ -11,7 +11,7 @@ Note: this has been developed and tested on OS X. Others should be
 similar.
 
 * install [minikube](https://github.com/kubernetes/minikube) - on OS X
-  it is highly recommended to use the [xhyve driver](https://github.com/kubernetes/minikube/blob/master/DRIVERS.md#xhyve-driver).
+  it is highly recommended to use the [hyperkit driver](https://github.com/kubernetes/minikube/blob/master/docs/drivers.md#hyperkit-driver).
 * install [kubectl]() - I install using [homebrew](http://brew.sh/index.html), but you can just
   grab the
   [binary](https://coreos.com/kubernetes/docs/latest/configure-kubectl.html)
@@ -22,10 +22,10 @@ similar.
 
 Install the prerequisites.
 
-If using the xhyve driver for minikube, you should be able to create
+If using the hyperkit driver for minikube, you should be able to create
 and start a single node, local Kubernetes cluster by running:
 `minikube start --vm-driver=hyperkit`.  If not using the hyperkit driver,
-just run `minikube start`.
+just run `minikube start`. See the [minikube docs](https://github.com/kubernetes/minikube/blob/master/docs/drivers.md) for more information.
 
 You can check that the node is up and running by running: `minikube
 status`. You should see something like:
